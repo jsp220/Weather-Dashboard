@@ -1,0 +1,13 @@
+:root {
+    --dark: rgb(67, 63, 203);
+
+}
+
+* {
+    font-family: Roboto, sans-serif;
+}
+
+.custom-jumbotron {
+    background-color: var(--dark);
+    color: white;
+}
