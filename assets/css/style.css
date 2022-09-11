@@ -18,3 +18,8 @@
         width: 20%;
     }
 }
+
+.card {
+    background-color: var(--dark);
+    color: white;
+}
