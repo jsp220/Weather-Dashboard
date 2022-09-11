@@ -11,3 +11,10 @@
     background-color: var(--dark);
     color: white;
 }
+
+@media (min-width: 1400px) {
+    .col-xxl-fifth {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
