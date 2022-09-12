@@ -3,7 +3,7 @@ var cityEl = $("#city");
 var todayEl = $("#today");
 var todayImgEl = $("#today-icon");
 var todayTempEl = $("#today-temp")
-var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=San%20Diego&units=imperial&APPID=3156f6ab42af6efa3211c272e0ef77df";
+var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=San%20Diego&units=imperial&APPID=";
 
 todayEl.text(moment().format("(MM/DD/YYYY)"));
 for (var i in cardTitles) {
