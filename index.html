@@ -27,7 +27,7 @@
                 <div class="col-12 border rounded-2 p-2 mb-1">
                     <h3 class="fw-bold">Search for a city</h3>
                     <input id="city" class="form-control mb-1" type="text" placeholder="San Diego" />
-                    <button type="submit" class="col-12 btn btn-primary mb-1">Search</button>
+                    <button type="submit" id="search" class="col-12 btn btn-primary mb-1">Search</button>
                 </div>
                 <div class="col-12 border rounded-2 p-1 mb-1">
                     <h3 class="fw-bold">Recently Searched</h3>
@@ -41,13 +41,13 @@
             <section class="row col-12 col-lg-9 m-0">
                 <div class="col-12 border rounded-2 p-2 mb-1 today-card"> <!-- main section where city and current conditions are displayed -->
                     <h2 class="fw-bold">
-                        <span id="city">San Diego</span> 
+                        <span id="today-city"></span> 
                         <span id="today"></span> 
                         <span><img alt="weather icon" class="rounded-2" id="today-icon" /></span></h2>
                     <p>Temperature: <span id="today-temp"></span> °F</p>
-                    <p>Wind: </p>
-                    <p>Humidity: </p>
-                    <p>UV Index: <span></span></p>
+                    <p>Wind: <span id="today-wind"></span> <span id="today-wind-dir"></span></p>
+                    <p>Humidity: <span id="today-hum"></span> %</p>
+                    <p>UV Index: <span id="today-uv" class="btn"></span></p>
                 </div>
                 <h3 class="fw-bold mt-2">5 Day Forecast</h3>
                 <div class="card col-6 col-md-4 col-xxl-fifth">
