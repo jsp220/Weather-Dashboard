@@ -23,3 +23,11 @@
     background-color: var(--dark);
     color: white;
 }
+
+.today-card {
+    background-color: #eee;
+}
+
+#today-icon {
+    background-color: white;
+}
