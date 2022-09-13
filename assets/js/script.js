@@ -1,3 +1,4 @@
+// create references to elements to be used in functions
 var cardEl = [];
 for (var i=1; i<6; i++) {
     var card = ".card-" + i;
@@ -12,6 +13,7 @@ for (var i = 0; i < 5; i++) {
     buttonEl[i].attr("id", recentId);
 };
 
+// initial function grabs search history from local storage and displays it under "recently searched"
 function init() {
     var searchHistory = localStorage.getItem("history");
     
@@ -27,26 +29,32 @@ function init() {
     }
 }
 
+// populates today's date using moment
 function fillDate() {
     $("#today").text(moment().format("(MM/DD/YYYY)"));
     return;
 }
 
+// updates the list of recent searches
 function updateRecent(city) {
-    searchHist.unshift(city);
+    searchHist.unshift(city); // insert new searches to the top
     for (var i in searchHist) {
+        // remove duplicates
         if (i > 0 && searchHist[i] == searchHist[0]) {
             searchHist.splice(i, 1);
         }
     }
+    // limit recent searches to 5
     searchHist.splice(5);
     for (var i in searchHist) {
         buttonEl[i].text(searchHist[i]);
         $("#recent").append(buttonEl[i]);
     }
+    // store in local storage
     localStorage.setItem("history", JSON.stringify(searchHist));
 }
 
+// fetches data from the geocoding API and returns latitude, longitude, and the proper city name (capitalized properly)
 async function geoApi(cityName) {
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
     var loc = await fetch(geoApiUrl)
@@ -61,31 +69,30 @@ async function geoApi(cityName) {
     return loc;
 }
 
-async function weatherApi(latLon) {
-    var weatherApiUrl = "https://api.openweathermap.org/data/3.0/onecall?lat=" + latLon[0] + "&lon=" + latLon[1] + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
+// uses lat/lon data from geoApi to fetch from one call and returns the weather data
+async function weatherApi(loc) {
+    var weatherApiUrl = "https://api.openweathermap.org/data/3.0/onecall?lat=" + loc[0] + "&lon=" + loc[1] + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
     var data = await fetch(weatherApiUrl)
         .then(function(response) {
             return response.json();
         })
-        // .then(function(data) {
-        //     currentWeather(data);
-        //     forecast(data);
-        // })
     return data;
 }
 
+// populates html with current weather data
 function currentWeather(data) {
     var icon = data.current.weather[0].icon;
     var imgUrl = "https://openweathermap.org/img/wn/" + icon + ".png";
     $("#today-icon").attr("src", imgUrl);
     $("#today-temp").text(data.current.temp);
     var windDir = data.current.wind_deg;
-    var windCode = windDirConv(windDir);
+    var windCode = windDirConv(windDir); // converts wind direction in degrees to compass directions
     $("#today-wind").text(`${windCode} ${data.current.wind_speed} mph`);
     $("#today-hum").text(data.current.humidity);
     todayUv(data.current.uvi);
 }
 
+// converts wind direction in degrees to compass directions
 function windDirConv(windDir) {
     if (windDir >= 348.75 || windDir < 11.25) {
         windDirCode = "N";
@@ -125,6 +132,7 @@ function windDirConv(windDir) {
     return windDirCode;
 }
 
+// displays UV index on html and styles the background to show severity
 function todayUv(uvi) {
     $("#today-uv").text(uvi);
     if (uvi < 2.5) {
@@ -139,8 +147,8 @@ function todayUv(uvi) {
     return;
 }
 
+// uses weather data to populate the 5-day forecast
 function forecast(data) {
-    
     for (var i in cardEl) {
         cardEl[i].empty();
 
@@ -162,7 +170,7 @@ function forecast(data) {
 
         var windEl = $("<p>");
         var windDir = data.daily[i].wind_deg;
-        var windCode = windDirConv(windDir);
+        var windCode = windDirConv(windDir); // converts wind direction in degrees to compass directions
         windEl.text(`Wind: ${windCode} ${data.daily[i].wind_speed} mph`);
         
         var humEl = $("<p>");
@@ -174,10 +182,12 @@ function forecast(data) {
     return;
 }
 
+// waits for the DOM to be ready before executing
 $(document).ready(function() {
     
     init();
 
+    // allows the user to hit enter key to search instead of clicking the search button
     $("#city").keypress(function (a) {
         var key = a.which;
         if (key == 13) {
@@ -185,6 +195,7 @@ $(document).ready(function() {
         }
     })
 
+    // clicking on a recently searched city shows that city's forecast
     $(".recent-search").on("click", async function() {      
         var cityName = $(this).text();
 
@@ -205,6 +216,7 @@ $(document).ready(function() {
         return;
     })
     
+    // clicking on search shows the forecast for the city entered into the input box
     $("#search").on("click", async function() {        
         var cityName = $(this).siblings("#city").val();
     
@@ -224,6 +236,5 @@ $(document).ready(function() {
         $(".wait").attr("style", "display: none;");
         return;
     })
-
 })
 
