@@ -11,31 +11,31 @@ for (var i=1; i<6; i++) {
 var cityEl = $("#city");
 var todayEl = $("#today");
 
-function geoApi(cityName) {
+async function geoApi(cityName) {
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
-    fetch(geoApiUrl)
+    var loc = await fetch(geoApiUrl)
         .then(function(response) {
             return response.json();
         })
         .then(function (data) {
             $("#today-city").text(`${data[0].name}, ${data[0].country}`);            
-            var lat = data[0].lat;
-            var lon = data[0].lon;
-            weatherApi(lat, lon);
-        })
+            return [data[0].lat, data[0].lon];
+        });
+    
+    return loc;
 }
 
-function weatherApi(lat, lon) {
-    var weatherApiUrl = "https://api.openweathermap.org/data/3.0/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
-    fetch(weatherApiUrl)
+async function weatherApi(latLon) {
+    var weatherApiUrl = "https://api.openweathermap.org/data/3.0/onecall?lat=" + latLon[0] + "&lon=" + latLon[1] + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
+    var data = await fetch(weatherApiUrl)
         .then(function(response) {
             return response.json();
         })
-        .then(function(data) {
-            currentWeather(data);
-            forecast(data);
-        })
-    return;
+        // .then(function(data) {
+        //     currentWeather(data);
+        //     forecast(data);
+        // })
+    return data;
 }
 
 function currentWeather(data) {
@@ -150,7 +150,7 @@ function fillDate() {
 }
 
 
-$("#search").on("click", function() {
+$("#search").on("click", async function() {
     var cityName = $(this).siblings("#city").val();
 
     if (!cityName) {
@@ -159,7 +159,14 @@ $("#search").on("click", function() {
 
     fillDate();
     
-    geoApi(cityName.replace(" ", "%20"));
+    var latLon = await geoApi(cityName.replace(" ", "%20"));
+
+    console.log(latLon)
+    var data = await weatherApi(latLon);
+    console.log(data);
+    currentWeather(data);
+    forecast(data);
+
     return;
 })
 
