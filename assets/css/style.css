@@ -23,7 +23,9 @@
     background-color: var(--dark);
     color: white;
 }
-
+.results {
+    display: none;
+}
 .today-card {
     background-color: #eee;
 }
@@ -32,6 +34,3 @@
     background-color: white;
 }
 
-.uv {
-    background-color: green;
-}

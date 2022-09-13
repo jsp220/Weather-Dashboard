@@ -1,15 +1,68 @@
-var cardTitles = [];
 var cardEl = [];
-
 for (var i=1; i<6; i++) {
-    var cardTitle = ".card-title-" + i;
     var card = ".card-" + i;
-    cardTitles[i-1] = $(cardTitle);
     cardEl[i-1] = $(card);
 }
 
-var cityEl = $("#city");
-var todayEl = $("#today");
+var searchHist = [];
+var buttonEl = [];
+for (var i = 0; i < 5; i++) {
+    buttonEl[i] = $("<button type='submit' class='col-12 btn btn-secondary mb-1'>")
+};
+
+$("#search").on("click", async function() {
+    var cityName = $(this).siblings("#city").val();
+
+    if (!cityName) {
+        return;
+    }
+
+    fillDate();
+    
+    
+    var loc = await geoApi(cityName.replace(" ", "%20"));
+    updateRecent(loc[2]);
+    var data = await weatherApi(loc);
+    currentWeather(data);
+    forecast(data);
+
+    return;
+})
+
+function init() {
+    var searchHistory = localStorage.getItem("history");
+    
+    if (searchHistory == null) {
+        searchHist = [];
+    } else {
+        searchHist = JSON.parse(searchHistory);
+        searchHist.splice(5);
+        for (i in searchHist) {
+            buttonEl[i].text(searchHist[i]);
+            $("#recent").append(buttonEl[i]);
+        }
+    }
+}
+
+function fillDate() {
+    $("#today").text(moment().format("(MM/DD/YYYY)"));
+    return;
+}
+
+function updateRecent(city) {
+    searchHist.unshift(city);
+    for (var i in searchHist) {
+        if (i > 0 && searchHist[i] == searchHist[0]) {
+            searchHist.splice(i, 1);
+        }
+    }
+    searchHist.splice(5);
+    for (var i in searchHist) {
+        buttonEl[i].text(searchHist[i]);
+        $("#recent").append(buttonEl[i]);
+    }
+    localStorage.setItem("history", JSON.stringify(searchHist));
+}
 
 async function geoApi(cityName) {
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
@@ -19,7 +72,7 @@ async function geoApi(cityName) {
         })
         .then(function (data) {
             $("#today-city").text(`${data[0].name}, ${data[0].country}`);            
-            return [data[0].lat, data[0].lon];
+            return [data[0].lat, data[0].lon, data[0].name];
         });
     
     return loc;
@@ -104,11 +157,11 @@ function todayUv(uvi) {
 }
 
 function forecast(data) {
-    // for (var i in cardTitles) {
-    //     cardTitles[i].text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
-    // }
     
+
     for (var i in cardEl) {
+        cardEl[i].empty();
+
         var cardTitleEl = $("<h5 class='card-title fw-bold'>");        
         cardTitleEl.addClass("card-title fw-bold");
         cardTitleEl.text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
@@ -136,37 +189,10 @@ function forecast(data) {
         cardEl[i].append(cardTitleEl, imgEl, lowTempEl, highTempEl, windEl, humEl);
     }
 
-    // <h5 class="card-title card-title-3 fw-bold"></h5>
-    // <img alt="weather icon" class="img-3" />
-    // <p>Temperature: <span id="day-3-temp"></span> °F</p>
-    // <p>Wind: <span id="day-3-wind"></span> <span id="day-3-wind-dir"></span></p>
-    // <p>Humidity: <span id="day-3-hum"></span> %</p>
     return;
 }
 
-function fillDate() {
-    todayEl.text(moment().format("(MM/DD/YYYY)"));
-    return;
-}
+init();
 
-
-$("#search").on("click", async function() {
-    var cityName = $(this).siblings("#city").val();
-
-    if (!cityName) {
-        return;
-    }
-
-    fillDate();
-    
-    var latLon = await geoApi(cityName.replace(" ", "%20"));
-
-    console.log(latLon)
-    var data = await weatherApi(latLon);
-    console.log(data);
-    currentWeather(data);
-    forecast(data);
-
-    return;
-})
-
+// search when enter is hit
+// recent searches shuold be functional buttons
