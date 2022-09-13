@@ -1,16 +1,24 @@
-var cardTitles = [$(".card-title-1"), $(".card-title-2"), $(".card-title-3"), $(".card-title-4"), $(".card-title-5")];
+var cardTitles = [];
+var cardEl = [];
+
+for (var i=1; i<6; i++) {
+    var cardTitle = ".card-title-" + i;
+    var card = ".card-" + i;
+    cardTitles[i-1] = $(cardTitle);
+    cardEl[i-1] = $(card);
+}
+
 var cityEl = $("#city");
 var todayEl = $("#today");
 
 function geoApi(cityName) {
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
-    console.log(geoApiUrl);
     fetch(geoApiUrl)
         .then(function(response) {
             return response.json();
         })
         .then(function (data) {
-            $("#today-city").text(data[0].name);            
+            $("#today-city").text(`${data[0].name}, ${data[0].country}`);            
             var lat = data[0].lat;
             var lon = data[0].lon;
             weatherApi(lat, lon);
@@ -96,14 +104,48 @@ function todayUv(uvi) {
 }
 
 function forecast(data) {
+    // for (var i in cardTitles) {
+    //     cardTitles[i].text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
+    // }
+    
+    for (var i in cardEl) {
+        var cardTitleEl = $("<h5 class='card-title fw-bold'>");        
+        cardTitleEl.addClass("card-title fw-bold");
+        cardTitleEl.text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
+        
+        var imgEl = $("<img alt='weather icon'>");
+        var imgUrl = "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + ".png";
+        imgEl.attr("src", imgUrl);
+
+        var lowTempEl = $("<p>");
+        var minTemp = data.daily[i].temp.min;
+        lowTempEl.text(`Low: ${minTemp} °F`);
+        
+        var highTempEl = $("<p>");
+        var maxTemp = data.daily[i].temp.max;
+        highTempEl.text(`High: ${maxTemp} °F`);
+
+        var windEl = $("<p>");
+        var windDir = data.daily[i].wind_deg;
+        var windCode = windDirConv(windDir);
+        windEl.text(`Wind: ${windCode} ${data.daily[i].wind_speed} mph`);
+        
+        var humEl = $("<p>");
+        humEl.text(`Humidity: ${data.daily[i].humidity} %`);
+
+        cardEl[i].append(cardTitleEl, imgEl, lowTempEl, highTempEl, windEl, humEl);
+    }
+
+    // <h5 class="card-title card-title-3 fw-bold"></h5>
+    // <img alt="weather icon" class="img-3" />
+    // <p>Temperature: <span id="day-3-temp"></span> °F</p>
+    // <p>Wind: <span id="day-3-wind"></span> <span id="day-3-wind-dir"></span></p>
+    // <p>Humidity: <span id="day-3-hum"></span> %</p>
     return;
 }
 
 function fillDate() {
     todayEl.text(moment().format("(MM/DD/YYYY)"));
-    for (var i in cardTitles) {
-        cardTitles[i].text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
-    }
     return;
 }
 
