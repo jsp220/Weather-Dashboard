@@ -7,27 +7,67 @@ for (var i=1; i<6; i++) {
 var searchHist = [];
 var buttonEl = [];
 for (var i = 0; i < 5; i++) {
-    buttonEl[i] = $("<button type='submit' class='col-12 btn btn-secondary mb-1'>")
+    recentId = "recent-" + eval(i+"+1");
+    buttonEl[i] = $("<button type='submit' class='col-12 btn btn-secondary mb-1 recent-search'>")
+    buttonEl[i].attr("id", recentId);
 };
 
-$("#search").on("click", async function() {
-    var cityName = $(this).siblings("#city").val();
+$(document).ready(function() {
+    $("#recent-1").on("click", function() {
+        var cityName = $(this).text();
+        console.log(cityName);
 
-    if (!cityName) {
+        if (!cityName) {
+            return;
+        }
+    
+        fillDate();
+    })
+    
+    $("#search").on("click", async function() {        
+        var cityName = $(this).siblings("#city").val();
+    
+        if (!cityName) {
+            return;
+        }
+    
+        fillDate();
+        
+        
+        var loc = await geoApi(cityName.replace(" ", "%20"));
+        updateRecent(loc[2]);
+        var data = await weatherApi(loc);
+        currentWeather(data);
+        forecast(data);
+    
+        $(".results").attr("style", "display: flex;");
+        $(".wait").attr("style", "display: none;");
         return;
-    }
+    })
 
-    fillDate();
-    
-    
-    var loc = await geoApi(cityName.replace(" ", "%20"));
-    updateRecent(loc[2]);
-    var data = await weatherApi(loc);
-    currentWeather(data);
-    forecast(data);
-
-    return;
+    init();
 })
+
+// $("#search").on("click", async function() {
+//     var cityName = $(this).siblings("#city").val();
+
+//     if (!cityName) {
+//         return;
+//     }
+
+//     fillDate();
+    
+    
+//     var loc = await geoApi(cityName.replace(" ", "%20"));
+//     updateRecent(loc[2]);
+//     var data = await weatherApi(loc);
+//     currentWeather(data);
+//     forecast(data);
+
+//     $(".results").attr("style", "display: flex;");
+
+//     return;
+// })
 
 function init() {
     var searchHistory = localStorage.getItem("history");
@@ -191,8 +231,6 @@ function forecast(data) {
 
     return;
 }
-
-init();
 
 // search when enter is hit
 // recent searches shuold be functional buttons
