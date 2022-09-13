@@ -4,12 +4,13 @@ var todayEl = $("#today");
 
 function geoApi(cityName) {
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
-    
+    console.log(geoApiUrl);
     fetch(geoApiUrl)
         .then(function(response) {
             return response.json();
         })
         .then(function (data) {
+            $("#today-city").text(data[0].name);            
             var lat = data[0].lat;
             var lon = data[0].lon;
             weatherApi(lat, lon);
@@ -38,7 +39,7 @@ function currentWeather(data) {
     var windCode = windDirConv(windDir);
     $("#today-wind").text(`${windCode} ${data.current.wind_speed} mph`);
     $("#today-hum").text(data.current.humidity);
-    $("#today-uv").text(data.current.uvi);
+    todayUv(data.current.uvi);
 }
 
 function windDirConv(windDir) {
@@ -80,32 +81,41 @@ function windDirConv(windDir) {
     return windDirCode;
 }
 
+function todayUv(uvi) {
+    $("#today-uv").text(uvi);
+    if (uvi < 2.5) {
+        $("#today-uv").attr("style", "background-color: green");
+    } else if (uvi < 5.5) {
+        $("#today-uv").attr("style", "background-color: yellow");
+    } else if (uvi < 7.5) {
+        $("#today-uv").attr("style", "background-color: orange");
+    } else {
+        $("#today-uv").attr("style", "background-color: red");
+    } 
+    return;
+}
+
 function forecast(data) {
     return;
 }
 
-
-        
-//         var imgUrl = "https://openweathermap.org/img/wn/" + icon + ".png";
-//         $("#today-icon").attr("src", imgUrl);
-//         $("#today-temp").text(data.main.temp);
-
-//     });
-
-todayEl.text(moment().format("(MM/DD/YYYY)"));
-
-for (var i in cardTitles) {
-    cardTitles[i].text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
+function fillDate() {
+    todayEl.text(moment().format("(MM/DD/YYYY)"));
+    for (var i in cardTitles) {
+        cardTitles[i].text(moment().add(1, "day").add(i, "day").format("MM/DD/YYYY"));
+    }
+    return;
 }
+
 
 $("#search").on("click", function() {
     var cityName = $(this).siblings("#city").val();
 
-    $("#today-city").text(cityName);
-
     if (!cityName) {
         return;
     }
+
+    fillDate();
     
     geoApi(cityName.replace(" ", "%20"));
     return;
