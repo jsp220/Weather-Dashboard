@@ -17,27 +17,31 @@
     <title>Weather Dashboard</title>
 </head>
 <body>
-    <header class="jumbotron custom-jumbotron text-center">
+    <header class="jumbotron custom-jumbotron text-center"> 
         <h1 class="display-4 p-2 fw-bold">Weather Dashboard</h1>
     </header>
 
     <main class="container-fluid">
         <section class="row m-0">
             <section class="col-12 col-lg-3">
+                <!-- Search bar/form -->
                 <div class="col-12 border rounded-2 p-2 mb-1">
                     <h3 class="fw-bold">Search for a city</h3>
                     <input id="city" class="form-control mb-1" type="text" placeholder="San Diego" />
                     <button type="submit" id="search" class="col-12 btn btn-primary mb-1">Search</button>
                 </div>
+                <!-- recently searched cities -->
                 <div id="recent" class="col-12 border rounded-2 p-1 mb-1">
                     <h3 class="fw-bold">Recently Searched</h3>
                 </div>
             </section>
             <section class="row col-12 col-lg-9 m-0 wait">
+                <!-- warning message -->
                 <h2 class="fw-bold">Results may take a few seconds to load.</h2>
             </section>
             <section class="row col-12 col-lg-9 m-0 results">
-                <div class="col-12 border rounded-2 p-2 mb-1 today-card"> <!-- main section where city and current conditions are displayed -->
+                <!-- city and current conditions are displayed -->
+                <div class="col-12 border rounded-2 p-2 mb-1 today-card"> 
                     <h2 class="fw-bold">
                         <span id="today-city"></span> 
                         <span id="today"></span> 
@@ -47,6 +51,7 @@
                     <p>Humidity: <span id="today-hum"></span> %</p>
                     <p>UV Index: <span id="today-uv" class="p-1 rounded-1"></span></p>
                 </div>
+                <!-- 5 day forecast section with a card for each day -->
                 <h3 class="fw-bold mt-2">5 Day Forecast</h3>
                 <div class="card col-6 col-md-4 col-xxl-fifth">
                     <div class="card-body card-1"></div>
@@ -64,12 +69,8 @@
                     <div class="card-body card-5"></div>
                 </div>
             </section>
-        </section>
-        
-
-        
+        </section>       
     </main>
-
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -77,6 +78,5 @@
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
     <script src="./assets/js/config.js"></script>
     <script src="./assets/js/script.js"></script>
-
 </body>
 </html>

@@ -1,17 +1,21 @@
-:root {
-    --dark: rgb(67, 63, 203);
+/* define variables to be used */
 
+:root {
+    --dark: rgb(66, 95, 223);
 }
 
+/* font to be used throughout the page */
 * {
     font-family: Roboto, sans-serif;
 }
 
+/* set background color and font color for jumbotron */
 .custom-jumbotron {
     background-color: var(--dark);
     color: white;
 }
 
+/* create a new class to display the 5-day forecast cards evenly and fill up the space */
 @media (min-width: 1400px) {
     .col-xxl-fifth {
         flex: 0 0 auto;
@@ -19,19 +23,23 @@
     }
 }
 
+/* set background color and font color for cards */
 .card {
     background-color: var(--dark);
     color: white;
 }
 
+/* hide results section until a search is made */
 .results {
     display: none;
 }
 
+/* background color for today's weather section */
 .today-card {
     background-color: #eee;
 }
 
+/* change bg color of the weather icons for better visibility */
 #today-icon {
     background-color: white;
 }
