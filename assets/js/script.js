@@ -56,7 +56,7 @@ function updateRecent(city) {
 
 // fetches data from the geocoding API and returns latitude, longitude, and the proper city name (capitalized properly)
 async function geoApi(cityName) {
-    var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
+    var geoApiUrl = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=1&appid=" + apiKey;
     var loc = await fetch(geoApiUrl)
         .then(function(response) {
             return response.json();
