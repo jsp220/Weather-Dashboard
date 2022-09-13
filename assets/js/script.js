@@ -8,66 +8,9 @@ var searchHist = [];
 var buttonEl = [];
 for (var i = 0; i < 5; i++) {
     recentId = "recent-" + eval(i+"+1");
-    buttonEl[i] = $("<button type='submit' class='col-12 btn btn-secondary mb-1 recent-search'>")
+    buttonEl[i] = $("<button type='button' class='col-12 btn btn-secondary mb-1 recent-search'>")
     buttonEl[i].attr("id", recentId);
 };
-
-$(document).ready(function() {
-    $("#recent-1").on("click", function() {
-        var cityName = $(this).text();
-        console.log(cityName);
-
-        if (!cityName) {
-            return;
-        }
-    
-        fillDate();
-    })
-    
-    $("#search").on("click", async function() {        
-        var cityName = $(this).siblings("#city").val();
-    
-        if (!cityName) {
-            return;
-        }
-    
-        fillDate();
-        
-        
-        var loc = await geoApi(cityName.replace(" ", "%20"));
-        updateRecent(loc[2]);
-        var data = await weatherApi(loc);
-        currentWeather(data);
-        forecast(data);
-    
-        $(".results").attr("style", "display: flex;");
-        $(".wait").attr("style", "display: none;");
-        return;
-    })
-
-    init();
-})
-
-// $("#search").on("click", async function() {
-//     var cityName = $(this).siblings("#city").val();
-
-//     if (!cityName) {
-//         return;
-//     }
-
-//     fillDate();
-    
-    
-//     var loc = await geoApi(cityName.replace(" ", "%20"));
-//     updateRecent(loc[2]);
-//     var data = await weatherApi(loc);
-//     currentWeather(data);
-//     forecast(data);
-
-//     $(".results").attr("style", "display: flex;");
-
-//     return;
-// })
 
 function init() {
     var searchHistory = localStorage.getItem("history");
@@ -198,7 +141,6 @@ function todayUv(uvi) {
 
 function forecast(data) {
     
-
     for (var i in cardEl) {
         cardEl[i].empty();
 
@@ -232,5 +174,56 @@ function forecast(data) {
     return;
 }
 
-// search when enter is hit
-// recent searches shuold be functional buttons
+$(document).ready(function() {
+    
+    init();
+
+    $("#city").keypress(function (a) {
+        var key = a.which;
+        if (key == 13) {
+            $("#search").click();
+        }
+    })
+
+    $(".recent-search").on("click", async function() {      
+        var cityName = $(this).text();
+
+        if (!cityName) {
+            return;
+        }
+
+        fillDate();
+
+        var loc = await geoApi(cityName.replace(" ", "%20"));
+        updateRecent(loc[2]);
+        var data = await weatherApi(loc);
+        currentWeather(data);
+        forecast(data);
+    
+        $(".results").attr("style", "display: flex;");
+        $(".wait").attr("style", "display: none;");
+        return;
+    })
+    
+    $("#search").on("click", async function() {        
+        var cityName = $(this).siblings("#city").val();
+    
+        if (!cityName) {
+            return;
+        }
+    
+        fillDate();
+                
+        var loc = await geoApi(cityName.replace(" ", "%20"));
+        updateRecent(loc[2]);
+        var data = await weatherApi(loc);
+        currentWeather(data);
+        forecast(data);
+    
+        $(".results").attr("style", "display: flex;");
+        $(".wait").attr("style", "display: none;");
+        return;
+    })
+
+})
+
